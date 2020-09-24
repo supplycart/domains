@@ -28,7 +28,6 @@ class DomainServiceProvider extends ServiceProvider
             __DIR__ . '/../config/domains.php' => config_path('domains.php'),
         ], 'config');
 
-
         $this->registerModules();
     }
 

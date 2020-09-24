@@ -4,6 +4,7 @@ namespace Supplycart\Domains;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use ReflectionClass;
 
 abstract class Domain
 {
@@ -25,7 +26,9 @@ abstract class Domain
 
     public static function registerRoutes(): void
     {
-        require __DIR__ . '/Http/routes.php';
+        $domain = new static;
+
+        require $domain->getDomainPath() . '/Http/routes.php';
     }
 
     public function registerObservers(): void
@@ -46,9 +49,27 @@ abstract class Domain
 
     public function registerPolicies()
     {
+        Gate::guessPolicyNamesUsing(function ($className) {
+            return $this->getReflectionClass()->getNamespaceName() . '\Policies\\' . class_basename($className) . 'Policy';
+        });
+
         /** @var \Illuminate\Database\Eloquent\Model $model */
         foreach ($this->policies as $model => $policy) {
             Gate::policy($model, $policy);
         }
+    }
+
+    public function getDomainPath(): string
+    {
+        return dirname($this->getReflectionClass()->getFileName());
+    }
+
+    /**
+     * @return \ReflectionClass
+     * @throws \ReflectionException
+     */
+    public function getReflectionClass(): \ReflectionClass
+    {
+        return (new ReflectionClass($this));
     }
 }
