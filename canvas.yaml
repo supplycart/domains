@@ -1,0 +1,27 @@
+preset: package
+
+namespace: Supplycart\Domains
+user-auth-provider: App\User
+
+paths:
+  src: src
+  resource: resources
+
+factory:
+  path: database/factories
+
+migration:
+  path: database/migrations
+  prefix: ''
+
+console:
+  namespace: Supplycart\Domains\Console
+
+model:
+  namespace: Supplycart\Domains
+
+provider:
+  namespace: Supplycart\Domains
+
+testing:
+  namespace: Supplycart\Domains\Tests
