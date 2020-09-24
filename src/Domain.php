@@ -3,38 +3,52 @@
 namespace Supplycart\Domains;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 
 abstract class Domain
 {
-    protected static array $observers = [];
+    protected array $observers = [];
 
-    protected static array $listeners = [];
+    protected array $listeners = [];
+
+    protected array $policies = [];
 
     public static function init()
     {
-        static::routes();
-        static::observers();
-        static::listeners();
+        $domain = new static();
+
+        // $domain->registerRoutes();
+        $domain->registerObservers();
+        $domain->registerEventListeners();
+        $domain->registerPolicies();
     }
 
-    public static function routes(): void
+    public static function registerRoutes(): void
     {
-
+        require __DIR__ . '/Http/routes.php';
     }
 
-    public static function observers(): void
+    public function registerObservers(): void
     {
         /** @var \Illuminate\Database\Eloquent\Model $model */
-        foreach (static::$observers as $model => $observer) {
+        foreach ($this->observers as $model => $observer) {
             $model::observe($observer);
         }
     }
 
-    public static function listeners(): void
+    public function registerEventListeners(): void
     {
         /** @var \Illuminate\Database\Eloquent\Model $model */
-        foreach (static::$listeners as $event => $listener) {
+        foreach ($this->listeners as $event => $listener) {
             Event::listen($event, $listener);
+        }
+    }
+
+    public function registerPolicies()
+    {
+        /** @var \Illuminate\Database\Eloquent\Model $model */
+        foreach ($this->policies as $model => $policy) {
+            Gate::policy($model, $policy);
         }
     }
 }
