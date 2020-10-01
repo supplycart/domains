@@ -50,7 +50,13 @@ abstract class Domain
     public function registerPolicies()
     {
         Gate::guessPolicyNamesUsing(function ($className) {
-            return $this->getReflectionClass()->getNamespaceName() . '\Policies\\' . class_basename($className) . 'Policy';
+            $policyClass = $this->getReflectionClass()->getNamespaceName() . '\Policies\\' . class_basename($className) . 'Policy';
+
+            if (class_exists($policyClass)) {
+                return $policyClass;
+            }
+
+            return "App\\Policies\\{$className}Policy";
         });
 
         /** @var \Illuminate\Database\Eloquent\Model $model */
