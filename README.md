@@ -1,4 +1,4 @@
-## Laravel Domains
+# Laravel Domains
 
 A simple package to set up domains for your applications.
 
