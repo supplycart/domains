@@ -52,7 +52,7 @@ abstract class Domain
         Gate::guessPolicyNamesUsing(function ($className) {
             $classBasename = class_basename($className);
 
-            $policyClass = $this->getReflectionClass()->getNamespaceName() . '\Policies\\' . $classBasename . 'Policy';
+            $policyClass = $this->getReflectionClass()->getNamespaceName() . "\Policies\\{$classBasename}Policy";
 
             if (class_exists($policyClass)) {
                 return $policyClass;
