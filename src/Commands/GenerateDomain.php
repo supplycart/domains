@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Commands;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+
+class GenerateDomain extends Command
+{
+    /**
+     * Domain Name.
+     *
+     * @var
+     */
+    public $name;
+
+    /**
+     * Directory Name.
+     *
+     * @var
+     */
+    public $directory;
+
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'make:domain 
+                            {name : Domain Name} 
+                            {--domain-path=Domains : Domain directory. Default app/Domains}
+                            ';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Create a domain folder structure';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
+     */
+    public function handle()
+    {
+        $this->name = ucfirst($this->argument('name'));
+
+        $this->generateDirectories();
+
+        return 1;
+    }
+
+    public function generateDirectories()
+    {
+        if (!$this->getDirectory()) {
+            $this->directory = $this->getProvidedName();
+        }
+
+        if (!File::exists('App' . DIRECTORY_SEPARATOR . 'Domains')) {
+            File::makeDirectory($this->domainPath, 0755, true);
+        }
+
+        File::makeDirectory($folderPath = 'App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name);
+
+        File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Models');
+
+        File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Http');
+    }
+}
