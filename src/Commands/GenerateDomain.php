@@ -26,10 +26,7 @@ class GenerateDomain extends Command
      *
      * @var string
      */
-    protected $signature = 'make:domain 
-                            {name : Domain Name} 
-                            {--domain-path=Domains : Domain directory. Default app/Domains}
-                            ';
+    protected $signature = 'make:domain {name : Domain Name}';
 
     /**
      * The console command description.
@@ -77,5 +74,11 @@ class GenerateDomain extends Command
         File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Models');
 
         File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Http');
+
+        File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Listeners');
+
+        File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Contracts');
+
+        File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Events');
     }
 }
