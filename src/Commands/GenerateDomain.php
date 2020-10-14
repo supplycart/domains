@@ -15,13 +15,6 @@ class GenerateDomain extends Command
     public $name;
 
     /**
-     * Directory Name.
-     *
-     * @var
-     */
-    public $directory;
-
-    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -61,10 +54,6 @@ class GenerateDomain extends Command
 
     public function generateDirectories()
     {
-        if (!$this->getDirectory()) {
-            $this->directory = $this->getProvidedName();
-        }
-
         if (!File::exists('App' . DIRECTORY_SEPARATOR . 'Domains')) {
             File::makeDirectory($this->domainPath, 0755, true);
         }
