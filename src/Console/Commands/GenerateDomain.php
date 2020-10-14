@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Commands;
+namespace Supplycart\Domains\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -54,20 +54,20 @@ class GenerateDomain extends Command
 
     public function generateDirectories()
     {
-        if (!File::exists('App' . DIRECTORY_SEPARATOR . 'Domains')) {
+        if (!File::exists(app_path('Domains'))) {
             File::makeDirectory($this->domainPath, 0755, true);
         }
 
-        File::makeDirectory($folderPath = 'App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name);
+        File::makeDirectory($folderPath = app_path('Domains' . DIRECTORY_SEPARATOR . $this->name));
 
-        File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Models');
+        File::makeDirectory(app_path('Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Models'));
 
-        File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Http');
+        File::makeDirectory(app_path('Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Http'));
 
-        File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Listeners');
+        File::makeDirectory(app_path('Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Listeners'));
 
-        File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Contracts');
+        File::makeDirectory(app_path('Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Contracts'));
 
-        File::makeDirectory('App' . DIRECTORY_SEPARATOR . 'Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Events');
+        File::makeDirectory(app_path('Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Events'));
     }
 }
