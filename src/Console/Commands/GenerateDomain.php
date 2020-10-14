@@ -55,10 +55,10 @@ class GenerateDomain extends Command
     public function generateDirectories()
     {
         if (!File::exists(app_path('Domains'))) {
-            File::makeDirectory($this->domainPath, 0755, true);
+            File::makeDirectory($this->domainPath, 0777, true);
         }
 
-        File::makeDirectory($folderPath = app_path('Domains' . DIRECTORY_SEPARATOR . $this->name));
+        File::makeDirectory(app_path('Domains' . DIRECTORY_SEPARATOR . $this->name, 0777, true));
 
         File::makeDirectory(app_path('Domains' . DIRECTORY_SEPARATOR . $this->name . DIRECTORY_SEPARATOR . 'Models'));
 
