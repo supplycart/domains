@@ -42,8 +42,14 @@ abstract class Domain
     public function registerEventListeners(): void
     {
         /** @var \Illuminate\Database\Eloquent\Model $model */
-        foreach ($this->listeners as $event => $listener) {
-            Event::listen($event, $listener);
+        foreach ($this->listeners as $event => $listeners) {
+            if (is_array($listeners)) {
+                foreach ($listeners as $listener) {
+                    Event::listen($event, $listener);
+                }
+            } else {
+                Event::listen($event, $listeners);
+            }
         }
     }
 
