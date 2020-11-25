@@ -1,0 +1,21 @@
+<?php
+
+namespace {{namespace}}\Policies;
+
+use Illuminate\Auth\Access\HandlesAuthorization;
+use {{namespace}}\Models\{{name}};
+
+class {{name}}
+{
+    use HandlesAuthorization;
+
+    /**
+     * Create a new policy instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+}
