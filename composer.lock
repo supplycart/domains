@@ -4558,6 +4558,7 @@
             "support": {
                 "source": "https://github.com/symfony/http-client-contracts/tree/v2.3.1"
             },
+
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -4572,6 +4573,7 @@
                     "type": "tidelift"
                 }
             ],
+
             "time": "2020-10-14T17:08:19+00:00"
         },
         {
@@ -6524,7 +6526,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^7.4"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"
 }
