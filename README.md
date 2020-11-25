@@ -45,9 +45,3 @@ app/
         - Order
             ...
 ```
-
-Command to populate domain folder
-```
-php artisan make:domain DomainName
-
-```

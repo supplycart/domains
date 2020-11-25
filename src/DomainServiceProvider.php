@@ -4,7 +4,6 @@ namespace Supplycart\Domains;
 
 use Illuminate\Contracts\Foundation\CachesRoutes;
 use Illuminate\Support\ServiceProvider;
-use Supplycart\Domains\Console\Commands\GenerateDomain;
 
 class DomainServiceProvider extends ServiceProvider
 {
@@ -28,12 +27,6 @@ class DomainServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/domains.php' => config_path('domains.php'),
         ], 'config');
-
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                GenerateDomain::class
-            ]);
-        }
 
         $this->registerModules();
     }

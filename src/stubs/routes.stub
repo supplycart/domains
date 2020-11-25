@@ -1,7 +1,0 @@
-<?php
-
-namespace {{namespace}}\Http;
-
-use Illuminate\Support\Facades\Route;
-
-// List of routes
