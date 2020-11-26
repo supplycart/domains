@@ -15,7 +15,7 @@ class CommandTest extends TestCase
         $modelPath = $domainPath . DIRECTORY_SEPARATOR . 'Models';
         $domainModelPath = $domainPath . DIRECTORY_SEPARATOR . 'Test.php';
 
-        $this->artisan('generate:domain', ['name' => 'test']);
+        $this->artisan('make:domain', ['name' => 'test']);
 
         $this->assertTrue(File::exists($domainPath));
         $this->assertTrue(File::exists($modelPath));
@@ -24,7 +24,7 @@ class CommandTest extends TestCase
         $expectedContents = <<<CLASS
         <?php
 
-        namespace {$domainPath};
+        namespace App\Domains\Test;
 
         use Supplycart\Domains\Domain;
 

@@ -4,7 +4,7 @@ namespace Supplycart\Domains;
 
 use Illuminate\Contracts\Foundation\CachesRoutes;
 use Illuminate\Support\ServiceProvider;
-use Supplycart\Domains\Console\Commands\GenerateDomain;
+use Supplycart\Domains\Console\Commands\MakeDomain;
 
 class DomainServiceProvider extends ServiceProvider
 {
@@ -31,7 +31,7 @@ class DomainServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                GenerateDomain::class
+                MakeDomain::class
             ]);
         }
 

@@ -5,7 +5,7 @@ namespace Supplycart\Domains\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class GenerateDomain extends Command
+class MakeDomain extends Command
 {
     /**
      * Domain Name.
@@ -15,10 +15,10 @@ class GenerateDomain extends Command
     public $name;
 
     /**
-    * Namespace.
-    *
-    * @var
-    */
+     * Namespace.
+     *
+     * @var
+     */
     public $namespace;
 
     /**
@@ -29,59 +29,59 @@ class GenerateDomain extends Command
     public $domainPath;
 
     /**
-    * Model Path.
-    *
-    * @var
-    */
+     * Model Path.
+     *
+     * @var
+     */
     public $modelPath;
 
     /**
-    * Http Path.
-    *
-    * @var
-    */
+     * Http Path.
+     *
+     * @var
+     */
     public $httpPath;
 
     /**
-    * Listener Path.
-    *
-    * @var
-    */
+     * Listener Path.
+     *
+     * @var
+     */
     public $listenerPath;
 
     /**
-    * Event Path.
-    *
-    * @var
-    */
+     * Event Path.
+     *
+     * @var
+     */
     public $eventPath;
 
     /**
-    * Job Path.
-    *
-    * @var
-    */
+     * Job Path.
+     *
+     * @var
+     */
     public $jobPath;
 
     /**
-    * Contract Path.
-    *
-    * @var
-    */
+     * Contract Path.
+     *
+     * @var
+     */
     public $contractPath;
 
     /**
-    * Policy Path.
-    *
-    * @var
-    */
+     * Policy Path.
+     *
+     * @var
+     */
     public $policyPath;
 
     /**
-    * Controller Path.
-    *
-    * @var
-    */
+     * Controller Path.
+     *
+     * @var
+     */
     public $controllerPath;
 
     /**
@@ -124,7 +124,7 @@ class GenerateDomain extends Command
         $this->modelPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Models';
 
         $this->httpPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Http';
-       
+
         $this->jobPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Jobs';
 
         $this->listenerPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Listeners';
@@ -137,18 +137,24 @@ class GenerateDomain extends Command
 
         $this->controllerPath = $this->httpPath . DIRECTORY_SEPARATOR . 'Controllers';
 
+        if (File::exists($this->domainPath)) {
+            $this->error('Domain already exists!');
+
+            return 0;
+        }
+
         $this->generateDirectories();
 
         $this->generateFiles();
 
-        return 'Folder generated';
+        $this->info("Domain {$this->name} has been generated successfully!");
+
+        return 1;
     }
 
     public function generateDirectories()
     {
-        if (!File::exists($this->domainPath)) {
-            File::makeDirectory($this->domainPath, 0777, true);
-        }
+        File::makeDirectory($this->domainPath, 0777, true);
 
         File::makeDirectory($this->modelPath, 0777, true);
 
@@ -219,7 +225,7 @@ class GenerateDomain extends Command
 
         $replacements = [
             $this->name,
-            $this->namespace
+            $this->namespace,
         ];
 
         return str_replace($replacings, $replacements, $fileContents);
