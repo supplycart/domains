@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4954f0dcd4687dbbff81b452fe4b62cc",
+    "content-hash": "fcd10bb8339df3853b5a9256141e865a",
     "packages": [],
     "packages-dev": [
         {
@@ -607,16 +607,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.16.0",
+            "version": "v8.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "0be6761601feb3cc1f51ac04b5cc5fbdde7928c1"
+                "reference": "f7dfc22e6c42e9ed4dda14c05814349af6943206"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/0be6761601feb3cc1f51ac04b5cc5fbdde7928c1",
-                "reference": "0be6761601feb3cc1f51ac04b5cc5fbdde7928c1",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/f7dfc22e6c42e9ed4dda14c05814349af6943206",
+                "reference": "f7dfc22e6c42e9ed4dda14c05814349af6943206",
                 "shasum": ""
             },
             "require": {
@@ -770,7 +770,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2020-11-24T16:13:01+00:00"
+            "time": "2020-11-25T15:01:02+00:00"
         },
         {
             "name": "league/commonmark",
@@ -4558,7 +4558,6 @@
             "support": {
                 "source": "https://github.com/symfony/http-client-contracts/tree/v2.3.1"
             },
-
             "funding": [
                 {
                     "url": "https://symfony.com/sponsor",
@@ -4573,7 +4572,6 @@
                     "type": "tidelift"
                 }
             ],
-
             "time": "2020-10-14T17:08:19+00:00"
         },
         {
