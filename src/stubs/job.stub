@@ -1,6 +1,6 @@
 <?php
 
-namespace {{namespace}}\Models;
+namespace {{namespace}}\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;

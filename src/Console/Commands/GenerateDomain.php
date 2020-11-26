@@ -15,6 +15,13 @@ class GenerateDomain extends Command
     public $name;
 
     /**
+    * Namespace.
+    *
+    * @var
+    */
+    public $namespace;
+
+    /**
      * Domain Path.
      *
      * @var
@@ -82,7 +89,7 @@ class GenerateDomain extends Command
      *
      * @var string
      */
-    protected $signature = 'generate:domain {name : Domain Name}';
+    protected $signature = 'make:domain {name : Domain Name}';
 
     /**
      * The console command description.
@@ -109,6 +116,8 @@ class GenerateDomain extends Command
     public function handle()
     {
         $this->name = ucfirst($this->argument('name'));
+
+        $this->namespace = "App\\Domains\\{$this->name}";
 
         $this->domainPath = app_path('Domains' . DIRECTORY_SEPARATOR . $this->name);
 
@@ -210,7 +219,7 @@ class GenerateDomain extends Command
 
         $replacements = [
             $this->name,
-            $this->domainPath
+            $this->namespace
         ];
 
         return str_replace($replacings, $replacements, $fileContents);
