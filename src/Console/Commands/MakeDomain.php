@@ -185,20 +185,20 @@ class MakeDomain extends Command
             $this->prepareFile(file_get_contents(__DIR__ . '/../../stubs/model.stub'))
         );
 
-        file_put_contents(
-            $this->listenerPath . DIRECTORY_SEPARATOR . "{$this->name}Listener.php",
-            $this->prepareFile(file_get_contents(__DIR__ . '/../../stubs/listener.stub'))
-        );
+        // file_put_contents(
+        //    $this->listenerPath . DIRECTORY_SEPARATOR . "{$this->name}Listener.php",
+        //    $this->prepareFile(file_get_contents(__DIR__ . '/../../stubs/listener.stub'))
+        // );
 
-        file_put_contents(
-            $this->eventPath . DIRECTORY_SEPARATOR . "{$this->name}Event.php",
-            $this->prepareFile(file_get_contents(__DIR__ . '/../../stubs/event.stub'))
-        );
+        // file_put_contents(
+        //     $this->eventPath . DIRECTORY_SEPARATOR . "{$this->name}Event.php",
+        //     $this->prepareFile(file_get_contents(__DIR__ . '/../../stubs/event.stub'))
+        // );
 
-        file_put_contents(
-            $this->jobPath . DIRECTORY_SEPARATOR . "{$this->name}Job.php",
-            $this->prepareFile(file_get_contents(__DIR__ . '/../../stubs/job.stub'))
-        );
+        // file_put_contents(
+        //     $this->jobPath . DIRECTORY_SEPARATOR . "{$this->name}Job.php",
+        //     $this->prepareFile(file_get_contents(__DIR__ . '/../../stubs/job.stub'))
+        // );
 
         file_put_contents(
             $this->policyPath . DIRECTORY_SEPARATOR . "{$this->name}Policy.php",
