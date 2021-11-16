@@ -27,8 +27,10 @@ abstract class Domain
     public static function registerRoutes(): void
     {
         $domain = new static;
-
-        require $domain->getDomainPath() . '/Http/routes.php';
+        
+        if (file_exists($domain->getDomainPath() . '/Http/routes.php')) {
+            require $domain->getDomainPath() . '/Http/routes.php';
+        }
     }
 
     public function registerObservers(): void
