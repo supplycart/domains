@@ -17,6 +17,13 @@ class CommandTest extends TestCase
 		$this->domainPath = app_path('Domains' . DIRECTORY_SEPARATOR . 'Test');
 	}
 
+	protected function tearDown(): void
+	{
+		parent::tearDown();
+
+		File::deleteDirectory(app_path('Domains'));
+	}
+
 	public function test_can_populate_domain(): void
     {
         $modelPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Models';
