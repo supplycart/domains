@@ -6,13 +6,13 @@ A simple package to set up domains for your applications.
 
 To install through composer, run the following command from terminal:
 
-```
+```php
 composer require supplycart/domains
 ```
 
 Then publish config using:
 
-```
+```php
 php artisan vendor:publish
 ```
 
@@ -25,7 +25,7 @@ You can set up a domain by creating a domain class which extends `Supplycart\Dom
 return [
     'modules' => [
         App\Domains\User\UserDomain::class
-    ]   
+    ]
 ];
 ```
 
@@ -47,7 +47,12 @@ app/
 ```
 
 Command to populate domain folder
-```
+```php
 php artisan make:domain DomainName
+```
 
+To populate events, listeners and jobs you may pass in the `--queues` argument.
+
+```php
+php artisan make:domain DomainName --queues
 ```
