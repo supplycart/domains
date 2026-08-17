@@ -1,52 +1,56 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Supplycart\Domains;
 
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\CachesRoutes;
 use Illuminate\Support\ServiceProvider;
+use InvalidArgumentException;
 use Supplycart\Domains\Console\Commands\MakeDomain;
 
-class DomainServiceProvider extends ServiceProvider
+final class DomainServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/domains.php', 'domains');
+        $this->mergeConfigFrom(__DIR__.'/../config/domains.php', 'domains');
     }
 
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
-        $this->publishes([
-            __DIR__ . '/../config/domains.php' => config_path('domains.php'),
-        ], 'config');
-
         if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/domains.php' => config_path('domains.php'),
+            ], 'domains-config');
+
             $this->commands([
-                MakeDomain::class
+                MakeDomain::class,
             ]);
         }
 
-        $this->registerModules();
+        $this->registerDomainRoutes();
     }
 
-    private function registerModules()
+    private function registerDomainRoutes(): void
     {
-        /** @var \Supplycart\Domains\Domain $domain */
-        foreach (config('domains.modules', []) as $domain) {
-            if (!($this->app instanceof CachesRoutes && $this->app->routesAreCached())) {
-                $domain::registerRoutes();
+        if ($this->app instanceof CachesRoutes && $this->app->routesAreCached()) {
+            return;
+        }
+
+        /** @var mixed $configuredDomains */
+        $configuredDomains = $this->app->make(Repository::class)->get('domains.modules', []);
+
+        if (! is_array($configuredDomains)) {
+            throw new InvalidArgumentException('The domains.modules configuration value must be an array.');
+        }
+
+        foreach ($configuredDomains as $domain) {
+            if (! is_string($domain) || ! is_subclass_of($domain, Domain::class)) {
+                throw new InvalidArgumentException('Every configured domain must extend '.Domain::class.'.');
             }
 
-            $domain::init();
+            $domain::registerRoutes();
         }
     }
 }

@@ -1,10 +1,15 @@
 <?php
 
-namespace {{namespace}};
+declare(strict_types=1);
 
+namespace {{namespace}}\Models;
+
+use {{namespace}}\Policies\{{name}}Policy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
 
-class {{name}} extends Model
+#[UsePolicy({{name}}Policy::class)]
+final class {{name}} extends Model
 {
     //
 }

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace {{namespace}}\Http;
 
+use {{namespace}}\Http\Controllers\{{name}}Controller;
 use Illuminate\Support\Facades\Route;
 
-// List of routes
+Route::get('/{{route}}', [{{name}}Controller::class, 'index']);
