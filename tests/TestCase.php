@@ -1,28 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Supplycart\Domains\Tests;
 
+use Illuminate\Contracts\Config\Repository;
+use Orchestra\Testbench\TestCase as Orchestra;
+use Supplycart\Domains\DomainServiceProvider;
 use Supplycart\Domains\Tests\Stubs\Domains\User\UserDomain;
 
-class TestCase extends \Orchestra\Testbench\TestCase
+abstract class TestCase extends Orchestra
 {
-    protected function getPackageProviders($app)
+    /** @return list<class-string> */
+    protected function getPackageProviders($app): array
     {
-        return ['Supplycart\Domains\DomainServiceProvider'];
+        return [DomainServiceProvider::class];
     }
 
-    /**
-     * Define environment setup.
-     *
-     * @param \Illuminate\Foundation\Application $app
-     * @return void
-     */
-    protected function getEnvironmentSetUp($app)
+    protected function getEnvironmentSetUp($app): void
     {
-        // Setup default database to use sqlite :memory:
-        $app['config']->set('domains.modules', [
+        $app->make(Repository::class)->set('domains.modules', [
             UserDomain::class,
         ]);
     }
-
 }

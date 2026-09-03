@@ -1,222 +1,111 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Supplycart\Domains\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use RuntimeException;
 
-class MakeDomain extends Command
+final class MakeDomain extends Command
 {
-    /**
-     * Domain Name.
-     *
-     * @var string
-     */
-    public $name;
+    protected $signature = 'make:domain {name : Domain name} {--queues : Scaffold an event, listener, and queued job}';
 
-    /**
-     * Namespace.
-     *
-     * @var string
-     */
-    public $namespace;
-
-    /**
-     * Domain Path.
-     *
-     * @var string
-     */
-    public $domainPath;
-
-    /**
-     * Model Path.
-     *
-     * @var string
-     */
-    public $modelPath;
-
-    /**
-     * Http Path.
-     *
-     * @var string
-     */
-    public $httpPath;
-
-    /**
-     * Listener Path.
-     *
-     * @var string
-     */
-    public $listenerPath;
-
-    /**
-     * Event Path.
-     *
-     * @var string
-     */
-    public $eventPath;
-
-    /**
-     * Job Path.
-     *
-     * @var string
-     */
-    public $jobPath;
-
-    /**
-     * Contract Path.
-     *
-     * @var string
-     */
-    public $contractPath;
-
-    /**
-     * Policy Path.
-     *
-     * @var string
-     */
-    public $policyPath;
-
-    /**
-     * @var string
-     */
-    public $controllerPath;
-
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'make:domain {name : Domain Name} {--queues : Whether to scaffold Job, Events and Listeners}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Create a domain folder structure';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    private string $domainName;
 
-    /**
-     * Execute the console command.
-     *
-     *
-     */
+    private string $domainNamespace;
+
+    private string $domainPath;
+
     public function handle(): int
     {
-        $this->name = ucfirst($this->argument('name'));
+        $name = $this->argument('name');
 
-        $this->namespace = "App\\Domains\\{$this->name}";
+        if (! is_string($name) || $name === '') {
+            $this->components->error('The domain name may not be empty.');
 
-        $this->domainPath = app_path('Domains' . DIRECTORY_SEPARATOR . $this->name);
-
-        if (File::exists($this->domainPath)) {
-            $this->error('Domain already exists!');
-
-            return 0;
+            return self::FAILURE;
         }
 
-        $this->modelPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Models';
+        $this->domainName = Str::studly($name);
 
-        $this->httpPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Http';
+        $this->domainNamespace = "App\\Domains\\{$this->domainName}";
+        $this->domainPath = app_path('Domains'.DIRECTORY_SEPARATOR.$this->domainName);
 
-        $this->jobPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Jobs';
+        if (is_dir($this->domainPath) || file_exists($this->domainPath)) {
+            $this->components->error("Domain [{$this->domainName}] already exists.");
 
-        $this->listenerPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Listeners';
-
-        $this->policyPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Policies';
-
-        $this->eventPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Events';
-
-        $this->contractPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Contracts';
-
-        $this->controllerPath = $this->httpPath . DIRECTORY_SEPARATOR . 'Controllers';
+            return self::FAILURE;
+        }
 
         $this->generateDirectories();
-
         $this->generateFiles();
 
-        $this->info("Domain {$this->name} has been generated successfully!");
+        $this->components->info("Domain [{$this->domainName}] created successfully.");
 
-        return 1;
+        return self::SUCCESS;
     }
 
-    public function generateDirectories(): void
+    private function generateDirectories(): void
     {
-        File::makeDirectory($this->domainPath, 0777, true);
-
-        File::makeDirectory($this->modelPath, 0777, true);
-
-        File::makeDirectory($this->httpPath, 0777, true);
-
-        File::makeDirectory($this->contractPath, 0777, true);
-
-        File::makeDirectory($this->httpPath . DIRECTORY_SEPARATOR . 'Controllers', 0777, true);
-
-        File::makeDirectory($this->policyPath, 0777, true);
+        $directories = [
+            $this->domainPath,
+            $this->domainPath.'/Http',
+            $this->domainPath.'/Http/Controllers',
+            $this->domainPath.'/Models',
+            $this->domainPath.'/Policies',
+        ];
 
         if ($this->option('queues')) {
-            $this->generateQueuesDirectoryFiles();
+            $directories = [
+                ...$directories,
+                $this->domainPath.'/Events',
+                $this->domainPath.'/Jobs',
+                $this->domainPath.'/Listeners',
+            ];
+        }
+
+        foreach ($directories as $directory) {
+            if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
+                throw new RuntimeException("Unable to create directory [{$directory}].");
+            }
         }
     }
 
-    protected function generateQueuesDirectoryFiles(): void
+    private function generateFiles(): void
     {
-        File::makeDirectory($this->listenerPath, 0777, true);
+        $this->writeStub('domain', $this->domainPath."/{$this->domainName}.php");
+        $this->writeStub('model', $this->domainPath."/Models/{$this->domainName}.php");
+        $this->writeStub('policy', $this->domainPath."/Policies/{$this->domainName}Policy.php");
+        $this->writeStub('routes', $this->domainPath.'/Http/routes.php');
+        $this->writeStub('controller', $this->domainPath."/Http/Controllers/{$this->domainName}Controller.php");
 
-        File::makeDirectory($this->eventPath, 0777, true);
-
-        File::makeDirectory($this->jobPath, 0777, true);
-
-        $this->replaceFileContents($this->listenerPath . DIRECTORY_SEPARATOR . "{$this->name}Listener.php", file_get_contents(__DIR__ . '/../../stubs/listener.stub'));
-
-        $this->replaceFileContents($this->eventPath . DIRECTORY_SEPARATOR . "{$this->name}Event.php", file_get_contents(__DIR__ . '/../../stubs/event.stub'));
-
-        $this->replaceFileContents($this->jobPath . DIRECTORY_SEPARATOR . "{$this->name}Job.php", file_get_contents(__DIR__ . '/../../stubs/job.stub'));
+        if ($this->option('queues')) {
+            $this->writeStub('event', $this->domainPath."/Events/{$this->domainName}Event.php");
+            $this->writeStub('listener', $this->domainPath."/Listeners/{$this->domainName}Listener.php");
+            $this->writeStub('job', $this->domainPath."/Jobs/{$this->domainName}Job.php");
+        }
     }
 
-    protected function replaceFileContents($path, $fileContents): void
+    private function writeStub(string $stub, string $destination): void
     {
-        file_put_contents($path, $this->prepareFile($fileContents));
-    }
+        $contents = file_get_contents(__DIR__."/../../stubs/{$stub}.stub");
 
-    public function prepareFile($fileContents)
-    {
-        $replacings = [
-            '{{name}}',
-            '{{namespace}}',
-        ];
+        if ($contents === false) {
+            throw new RuntimeException("Unable to read the [{$stub}] domain stub.");
+        }
 
-        $replacements = [
-            $this->name,
-            $this->namespace,
-        ];
-
-        return str_replace($replacings, $replacements, $fileContents);
-    }
-
-    public function generateFiles(): void
-    {
-        $this->replaceFileContents($this->domainPath . DIRECTORY_SEPARATOR . "{$this->name}.php", file_get_contents(__DIR__ . '/../../stubs/domain.stub'));
-
-        $this->replaceFileContents($this->modelPath . DIRECTORY_SEPARATOR . "{$this->name}.php", file_get_contents(__DIR__ . '/../../stubs/model.stub'));
-
-        $this->replaceFileContents($this->policyPath . DIRECTORY_SEPARATOR . "{$this->name}Policy.php", file_get_contents(__DIR__ . '/../../stubs/policy.stub'));
-
-        $this->replaceFileContents($this->httpPath . DIRECTORY_SEPARATOR . "routes.php", file_get_contents(__DIR__ . '/../../stubs/routes.stub'));
-
-        $this->replaceFileContents(
-            $this->httpPath . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . "{$this->name}Controller.php",
-            file_get_contents(__DIR__ . '/../../stubs/controller.stub')
+        $rendered = str_replace(
+            ['{{name}}', '{{namespace}}', '{{route}}', '{{variable}}'],
+            [$this->domainName, $this->domainNamespace, Str::kebab($this->domainName), Str::camel($this->domainName)],
+            $contents,
         );
+
+        if (file_put_contents($destination, $rendered) === false) {
+            throw new RuntimeException("Unable to write generated file [{$destination}].");
+        }
     }
 }

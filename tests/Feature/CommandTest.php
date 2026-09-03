@@ -1,52 +1,62 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Supplycart\Domains\Tests\Feature;
 
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Supplycart\Domains\Tests\TestCase;
 
-class CommandTest extends TestCase
+final class CommandTest extends TestCase
 {
-    public ?string $domainPath;
+    private string $domainPath;
 
     public function test_can_populate_domain(): void
     {
-        $modelPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Models';
-        $domainModelPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Test.php';
+        $modelPath = $this->domainPath.DIRECTORY_SEPARATOR.'Models';
+        $domainModelPath = $this->domainPath.DIRECTORY_SEPARATOR.'Test.php';
 
-        $this->artisan('make:domain', ['name' => 'test', '--queues']);
+        $this->assertSame(Command::SUCCESS, Artisan::call('make:domain', ['name' => 'test']));
 
-        $this->assertTrue(File::exists($this->domainPath));
-        $this->assertTrue(File::exists($modelPath));
-        $this->assertTrue(File::exists($domainModelPath));
+        $this->assertDirectoryExists($this->domainPath);
+        $this->assertDirectoryExists($modelPath);
+        $this->assertFileExists($domainModelPath);
 
         $expectedContents = <<<CLASS
         <?php
+
+        declare(strict_types=1);
 
         namespace App\Domains\Test;
 
         use Supplycart\Domains\Domain;
 
-        class Test extends Domain
+        final class Test extends Domain
         {
-            //
+            public static function registerRoutes(): void
+            {
+                require __DIR__.'/Http/routes.php';
+            }
         }
         CLASS;
 
-        $this->assertEquals($expectedContents, file_get_contents($domainModelPath));
+        $this->assertSame($expectedContents.PHP_EOL, file_get_contents($domainModelPath));
+        $this->assertStringContainsString("Route::get('/test'", (string) file_get_contents($this->domainPath.'/Http/routes.php'));
+        $this->assertStringContainsString('#[UsePolicy(TestPolicy::class)]', (string) file_get_contents($this->domainPath.'/Models/Test.php'));
     }
 
     public function test_can_populate_queues_path(): void
     {
-        $domainListenersDirectoryPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Listeners';
-        $domainListenersPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Listeners' . DIRECTORY_SEPARATOR . 'TestListener.php';
-        $domainEventsDirectoryPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Events';
-        $domainEventsPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Events' . DIRECTORY_SEPARATOR . 'TestEvent.php';
-        $domainJobsDirectoryPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Jobs';
-        $domainJobsPath = $this->domainPath . DIRECTORY_SEPARATOR . 'Jobs' . DIRECTORY_SEPARATOR . 'TestJob.php';
+        $domainListenersDirectoryPath = $this->domainPath.DIRECTORY_SEPARATOR.'Listeners';
+        $domainListenersPath = $this->domainPath.DIRECTORY_SEPARATOR.'Listeners'.DIRECTORY_SEPARATOR.'TestListener.php';
+        $domainEventsDirectoryPath = $this->domainPath.DIRECTORY_SEPARATOR.'Events';
+        $domainEventsPath = $this->domainPath.DIRECTORY_SEPARATOR.'Events'.DIRECTORY_SEPARATOR.'TestEvent.php';
+        $domainJobsDirectoryPath = $this->domainPath.DIRECTORY_SEPARATOR.'Jobs';
+        $domainJobsPath = $this->domainPath.DIRECTORY_SEPARATOR.'Jobs'.DIRECTORY_SEPARATOR.'TestJob.php';
 
-        Artisan::call('make:domain test --queues');
+        $this->assertSame(Command::SUCCESS, Artisan::call('make:domain', ['name' => 'test', '--queues' => true]));
 
         $this->assertTrue(File::exists($this->domainPath));
         $this->assertTrue(File::isDirectory($domainListenersDirectoryPath));
@@ -55,19 +65,27 @@ class CommandTest extends TestCase
         $this->assertTrue(File::exists($domainListenersPath));
         $this->assertTrue(File::exists($domainEventsPath));
         $this->assertTrue(File::exists($domainJobsPath));
+        $this->assertStringContainsString('handle(TestEvent $event): void', (string) file_get_contents($domainListenersPath));
+    }
+
+    public function test_existing_domain_returns_failure(): void
+    {
+        File::makeDirectory($this->domainPath, 0755, true);
+
+        $this->assertSame(Command::FAILURE, Artisan::call('make:domain', ['name' => 'test']));
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->domainPath = app_path('Domains' . DIRECTORY_SEPARATOR . 'Test');
+        $this->domainPath = app_path('Domains'.DIRECTORY_SEPARATOR.'Test');
     }
 
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         File::deleteDirectory(app_path('Domains'));
+
+        parent::tearDown();
     }
 }

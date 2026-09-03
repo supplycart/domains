@@ -1,30 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace {{namespace}}\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-class {{name}}Job
+final class {{name}}Job implements ShouldQueue
 {
-    use Dispatchable, Queueable;
+    use Queueable;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(): void
     {
         //
     }

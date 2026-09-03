@@ -1,25 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Supplycart\Domains\Tests\Feature;
 
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Facades\Route;
-use Supplycart\Domains\Tests\Stubs\Domains\User\Models\User;
-use Supplycart\Domains\Tests\Stubs\Domains\User\Policies\UserPolicy;
+use InvalidArgumentException;
+use Supplycart\Domains\DomainServiceProvider;
 use Supplycart\Domains\Tests\TestCase;
 
-class DomainInitTest extends TestCase
+final class DomainInitTest extends TestCase
 {
-    public function test_domain_routes_can_be_registered()
+    public function test_domain_routes_can_be_registered(): void
     {
         $this->assertTrue(Route::has('users.index'));
     }
 
-    public function test_domain_policies_can_be_registered()
+    public function test_invalid_domain_configuration_is_rejected(): void
     {
-        $this->assertEquals(UserPolicy::class, get_class(Gate::getPolicyFor(User::class)));
+        $app = $this->app;
+        self::assertNotNull($app);
+        $app->make(Repository::class)->set('domains.modules', [self::class]);
 
-        $this->get('users')->assertSuccessful()->assertSee('Users Index');
-        $this->get('users/edit')->assertForbidden()->assertDontSee('Users Index');
+        $this->expectException(InvalidArgumentException::class);
+
+        (new DomainServiceProvider($app))->boot();
+    }
+
+    public function test_non_array_domain_configuration_is_rejected(): void
+    {
+        $app = $this->app;
+        self::assertNotNull($app);
+        $app->make(Repository::class)->set('domains.modules', 'invalid');
+
+        $this->expectException(InvalidArgumentException::class);
+
+        (new DomainServiceProvider($app))->boot();
     }
 }

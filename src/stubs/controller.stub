@@ -1,34 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace {{namespace}}\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
-class {{name}}Controller extends Controller
+final class {{name}}Controller extends Controller
 {
-    public function index(Request $request)
+    public function index(): Response
     {
-       //
-    }
-
-    public function show(Request $request)
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-    public function update(Request $request)
-    {
-        //
-    }
-
-    public function destroy(Request $request)
-    {
-        //
+        return response()->noContent();
     }
 }
